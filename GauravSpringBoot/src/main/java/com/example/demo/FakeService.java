@@ -23,8 +23,14 @@ public class FakeService {
 	}
 
 	public Book getASingleBook(int id) {
-
-		return list.stream().filter(e -> e.getId() == id).findFirst().get();
+		Book book= null;
+		
+		try {
+			book= list.stream().filter(e -> e.getId() == id).findFirst().get();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return book;
 	}
 
 	public Book saveAndUpdateASingleBook(Book b) {
@@ -36,13 +42,12 @@ public class FakeService {
 		list = list.stream().filter(e -> e.getId() != id).collect(Collectors.toList());
 	}
 
-	public void updateSingleBook(Book b,int id) {
-		list=list.stream().map(e->{
-			if(e.getId()==id){
-				e.setId(b.getId());
+	public void updateSingleBook(Book b, int id) {
+		list = list.stream().map(e -> {
+			if (e.getId() == id) {
 				e.setAddress(b.getAddress());
 				e.setName(b.getName());
-		}
+			}
 			return e;
 		}).collect(Collectors.toList());
 	}
