@@ -1,11 +1,12 @@
-package com.example.demo;
+package com.example.demo.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Entity
 public class Book {
@@ -14,13 +15,14 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
-	private String address;
+	@OneToOne(cascade = CascadeType.ALL)
+	private Author author;
 
-	public Book(int id, String name, String address) {
+	public Book(int id, String name, Author author) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.address = address;
+		this.author = author;
 	}
 
 	public Book() {
@@ -44,19 +46,19 @@ public class Book {
 		this.name = name;
 	}
 
-	public String getAddress() {
-		return address;
+	public Author getAuthor() {
+		return author;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setAuthor(Author author) {
+		this.author = author;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
+		result = prime * result + ((author == null) ? 0 : author.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
@@ -71,10 +73,10 @@ public class Book {
 		if (getClass() != obj.getClass())
 			return false;
 		Book other = (Book) obj;
-		if (address == null) {
-			if (other.address != null)
+		if (author == null) {
+			if (other.author != null)
 				return false;
-		} else if (!address.equals(other.address))
+		} else if (!author.equals(other.author))
 			return false;
 		if (id != other.id)
 			return false;
@@ -88,7 +90,7 @@ public class Book {
 
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", name=" + name + ", address=" + address + "]";
+		return "Book [id=" + id + ", name=" + name + ", address=" + author + "]";
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,16 +14,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.entity.Book;
+import com.example.demo.repository.BookRepository;
+
 @RestController
-public class TestController {
+public class RepositoryTestController {
 
 	@Autowired
-	private FakeService fakeservice;
-
-	@GetMapping("/book")
+	private BookRepository bookrepository;
+	
+	
+	@GetMapping("/bookrepo")
 	public ResponseEntity<List<Book>> itWillReturnListOfBook() {
 
-		List<Book> books = fakeservice.getAllBooks();
+		List<Book> books = (List<Book>)bookrepository.findAll();
 
 		if (books.size() <= 0) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -31,24 +35,25 @@ public class TestController {
 		return ResponseEntity.of(Optional.of(books));
 
 	}
-
-	@GetMapping("/book/{id}")
+	
+	@GetMapping("/bookrepo/{id}")
 	public ResponseEntity<Book> itWillReturnSingleBook(@PathVariable("id") int id) {
 		Book b = null;
-		b = fakeservice.getASingleBook(id);
+		b = bookrepository.findById(id);
 
 		if (b == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		return ResponseEntity.of(Optional.of(b));
 	}
-
-	@PostMapping("/book")
+	
+	
+	@PostMapping("/bookrepo")
 	public ResponseEntity<Book> saveIt(@RequestBody Book b) {
 		Book bok = null;
 
 		try {
-			bok = fakeservice.saveAndUpdateASingleBook(b);
+			bok = bookrepository.save(b);
 			return ResponseEntity.status(HttpStatus.CREATED).body(bok);
 
 		} catch (Exception e) {
@@ -56,30 +61,33 @@ public class TestController {
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
-
-	@DeleteMapping("/book/{id}")
-	@SuppressWarnings("rawtypes")
-	public ResponseEntity deleteBookById(@PathVariable("id") int id) {
-
-		try {
-			fakeservice.deleteASingleBook(id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@PutMapping("/book/{id}")
+	
+	@PutMapping("/bookrepo/{id}")
 	@SuppressWarnings("rawtypes")
 	public ResponseEntity updateTheBookByID(@RequestBody Book b, @PathVariable("id") int id) {
 		try {
-			fakeservice.updateSingleBook(b, id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			bookrepository.save(b);
+			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 		
 	}
+	
+	@DeleteMapping("/bookrepo/{id}")
+	@SuppressWarnings("rawtypes")
+	public ResponseEntity deleteBookById(@PathVariable("id") int id) {
+
+		try {
+			bookrepository.deleteById(id);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	
+	
 }
